@@ -7,6 +7,8 @@ export default function DocuSenseAI() {
   const [loading, setLoading] = useState(false);
 
   const chatEndRef = useRef(null);
+  
+  const BASE_URL = "https://docusenseai-backend.onrender.com";
 
   useEffect(() => {
   if (messages.length > 0) {
@@ -28,10 +30,10 @@ export default function DocuSenseAI() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/upload-pdf", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(`${BASE_URL}/upload-pdf`, {
+  method: "POST",
+  body: formData,
+});
 
       const data = await response.json();
 
@@ -61,10 +63,8 @@ export default function DocuSenseAI() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/ask?query=${encodeURIComponent(
-          currentQuestion
-        )}`
-      );
+  `${BASE_URL}/ask?query=${encodeURIComponent(currentQuestion)}`
+);
 
       const data = await response.json();
 
