@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
-import ollama
+#import ollama
 
 from utils.pdf_loader import load_pdf
 from utils.text_splitter import split_documents
