@@ -1,11 +1,15 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
+import os
 #import ollama
 
 from utils.pdf_loader import load_pdf
 from utils.text_splitter import split_documents
 from utils.vector_store import create_vector_store
+
+#  CREATE uploads folder
+os.makedirs("uploads", exist_ok=True)
 
 app = FastAPI()
 app.add_middleware(
