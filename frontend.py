@@ -123,7 +123,7 @@ if uploaded_file is not None:
         }
 
         response = requests.post(
-            "http://127.0.0.1:8000/upload-pdf",
+            "https://docusenseai-backend.onrender.com/upload-pdf",
             files=files
         )
 
@@ -143,7 +143,7 @@ if st.button("Ask AI"):
     with st.spinner("Generating answer..."):
 
         response = requests.get(
-            "http://127.0.0.1:8000/ask",
+            "https://docusenseai-backend.onrender.com/ask",
             params={"query": question}
         )
 
