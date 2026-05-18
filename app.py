@@ -59,38 +59,46 @@ def ask_question(query: str):
             "error": "Please upload a PDF first"
         }
 
-    # Retrieve relevant chunk
+    # Retrieve relevant chunks
     results = vectorstore.similarity_search(query, k=2)
 
     context = "\n\n".join(
-    [result.page_content for result in results]
-)
-
-    prompt = prompt = f"""
-Answer the question based only on the context below.
-
-Context:
-{context}
-
-Question:
-{query}
-
-Answer:
-"""
-
-    response = ollama.chat(
-        model='tinyllama',
-        messages=[
-            {
-                'role': 'user',
-                'content': prompt
-            }
-        ]
+        [result.page_content for result in results]
     )
 
-    answer = response['message']['content']
+    # Return only relevant context (no LLM)
+    answer = context.strip()
+
+    if len(answer) > 800:
+        answer = answer[:800] + "..."
 
     return {
         "query": query,
         "answer": answer
     }
+
+
+    #prompt = prompt = f"""
+#Answer the question based only on the context below.
+
+##Context:
+#{context}
+
+#Question:
+#{query}
+
+#Answer:
+#"""
+
+    #response = ollama.chat(
+        #model='tinyllama',
+        #messages=[
+            #{
+                #'role': 'user',
+                #'content': prompt
+           # }
+    #    ]
+  #  )
+
+   # answer = response['message']['content']
+   
