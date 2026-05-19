@@ -21,8 +21,8 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,   # 🔥 IMPORTANT FIX
+    allow_origins=["*"],  # 🔥 for now (demo purpose)
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -67,18 +67,45 @@ def ask_question(query: str):
     if vectorstore is None:
         return {"error": "Please upload a PDF first"}
 
-    results = vectorstore.similarity_search(query, k=2)
+    results = vectorstore.similarity_search(query, k=5)
 
-    context = "\n\n".join(
-        [result.page_content for result in results]
-    )
+    # 🔥 pick best chunk manually
+    best_text = ""
+    for doc in results:
+        text = doc.page_content.strip()
 
-    answer = context.strip()
+        # skip noisy chunks
+        if len(text) < 100:
+            continue
+        if any(x in text for x in ["•", "1.", "2.", "202", "8/"]):
+            continue
 
-    if len(answer) > 800:
-        answer = answer[:800] + "..."
+        best_text = text
+        break
+
+    if not best_text:
+        best_text = results[0].page_content
+
+    # 🔥 clean text
+    best_text = best_text.replace("\n", " ")
+    best_text = " ".join(best_text.split())
+
+    # 🔥 remove dates/numbers junk
+    import re
+    best_text = re.sub(r"\d{1,2}/\d{1,2}/\d{2,4}", "", best_text)
+    best_text = re.sub(r"\b\d+\b", "", best_text)
+
+    # 🔥 split into sentences
+    sentences = best_text.split(". ")
+
+    # take only first clean sentence
+    answer = sentences[0]
+
+    # if too short, add second
+    if len(answer) < 60 and len(sentences) > 1:
+        answer += ". " + sentences[1]
 
     return {
         "query": query,
-        "answer": answer
+        "answer": answer.strip()
     }

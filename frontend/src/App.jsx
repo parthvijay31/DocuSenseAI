@@ -8,7 +8,10 @@ export default function DocuSenseAI() {
 
   const chatEndRef = useRef(null);
   
-  const BASE_URL = "https://docusenseai-backend.onrender.com";
+  const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://127.0.0.1:8000"
+    : "https://docusenseai-backend.onrender.com";
 
   useEffect(() => {
   if (messages.length > 0) {
