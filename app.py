@@ -13,7 +13,7 @@ os.makedirs("uploads", exist_ok=True)
 
 app = FastAPI()
 
-# ✅ CORRECT CORS CONFIG
+#  CORRECT CORS CONFIG
 origins = [
     "https://docu-sense-ai-nine.vercel.app",
     "http://localhost:5173"
@@ -27,7 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ HANDLE PREFLIGHT REQUEST (VERY IMPORTANT)
+#  HANDLE PREFLIGHT REQUEST
 @app.options("/{rest_of_path:path}")
 async def preflight_handler(rest_of_path: str):
     return JSONResponse(content={})
@@ -69,7 +69,7 @@ def ask_question(query: str):
 
     results = vectorstore.similarity_search(query, k=5)
 
-    # 🔥 pick best chunk manually
+    #  pick best chunk manually
     best_text = ""
     for doc in results:
         text = doc.page_content.strip()
@@ -86,16 +86,16 @@ def ask_question(query: str):
     if not best_text:
         best_text = results[0].page_content
 
-    # 🔥 clean text
+    #  clean text
     best_text = best_text.replace("\n", " ")
     best_text = " ".join(best_text.split())
 
-    # 🔥 remove dates/numbers junk
+    #  remove dates/numbers junk
     import re
     best_text = re.sub(r"\d{1,2}/\d{1,2}/\d{2,4}", "", best_text)
     best_text = re.sub(r"\b\d+\b", "", best_text)
 
-    # 🔥 split into sentences
+    #  split into sentences
     sentences = best_text.split(". ")
 
     # take only first clean sentence
